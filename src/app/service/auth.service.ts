@@ -21,4 +21,8 @@ export class AuthService {
   public login(loginUsuario: LoginUsuario){
     return this.httpClient.post<JwtDTO>(`${this.authURL}login`,loginUsuario)
   }
+
+  public refresh(jwtDTO: JwtDTO){
+    return this.httpClient.post<JwtDTO>(`${this.authURL}refresh`,jwtDTO)
+  }
 }
