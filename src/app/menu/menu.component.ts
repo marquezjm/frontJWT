@@ -22,11 +22,7 @@ export class MenuComponent implements OnInit,OnChanges {
   }
 
   ngOnInit() {
-    if(this.tokeService.getToken()){
-      this.isLogged=true
-    } else {
-      this.isLogged=false
-    }
+    this.isLogged=this.tokeService.isLogged()
 
 
     this.route.events.pipe(
@@ -35,11 +31,7 @@ export class MenuComponent implements OnInit,OnChanges {
       filter((route: ActivatedRoute) => route.outlet === 'primary'),
     ).subscribe((route: ActivatedRoute) => {
       console.log(window.location.hash)
-      if(this.tokeService.getToken()){
-        this.isLogged=true
-      } else {
-        this.isLogged=false
-      }
+      this.isLogged=this.tokeService.isLogged()
     })
 
    

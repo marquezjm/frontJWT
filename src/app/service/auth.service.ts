@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { JwtDTO } from '../models/jwt-dto';
 import { LoginUsuario } from '../models/login-usuario';
 import { NuevoUsuario } from '../models/nuevo-usuario';
@@ -9,7 +10,7 @@ import { NuevoUsuario } from '../models/nuevo-usuario';
 })
 export class AuthService {
 
-  authURL='http://localhost:8080/auth/'
+  authURL=environment.authURL
 
   constructor(private httpClient: HttpClient) { }
 

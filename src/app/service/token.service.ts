@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 const TOKEN_KEY = 'AuthToken'
-const USERNAME_KEY = 'AuthUserName'
-const AUTHORITIES_KEY = 'AuthAuthorities'
 
 @Injectable({
   providedIn: 'root'
@@ -11,42 +10,55 @@ export class TokenService {
 
   roles:Array<string> = []
 
-  constructor() { }
+  constructor(private router:Router) { }
 
   public setToken(token:string){
-    window.sessionStorage.removeItem(TOKEN_KEY)
-    window.sessionStorage.setItem(TOKEN_KEY,token)
+    window.localStorage.removeItem(TOKEN_KEY)
+    window.localStorage.setItem(TOKEN_KEY,token)
   }
 
   public getToken(){
-    return sessionStorage.getItem(TOKEN_KEY)
+    return localStorage.getItem(TOKEN_KEY)
   }
 
-  public setUserName(username:string){
-    window.sessionStorage.removeItem(USERNAME_KEY)
-    window.sessionStorage.setItem(USERNAME_KEY,username)
+  public isLogged(){
+    if(this.getToken()){
+      return true
+    }
+    return false
   }
 
   public getUserName(){
-    return sessionStorage.getItem(USERNAME_KEY)
-  }
-
-  public setAuthorities(authorities:string[]){
-    window.sessionStorage.removeItem(AUTHORITIES_KEY)
-    window.sessionStorage.setItem(AUTHORITIES_KEY,JSON.stringify(authorities))
-  }
-
-  public getAuthorities(){
-    this.roles = []
-    if(sessionStorage.getItem(AUTHORITIES_KEY)){
-      JSON.parse(sessionStorage.getItem(AUTHORITIES_KEY)).forEach(authority => {
-        this.roles.push(authority.authority)
-      });
+    if(!this.isLogged()){
+      return null
     }
-    return this.roles
+    const token = this.getToken()
+    const payload = token.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const userName = values.sub
+    return userName
   }
+
+  public isAdmin(){
+    if(!this.isLogged()){
+      return false
+    }
+    const token = this.getToken()
+    const payload = token.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const roles = values.roles
+    if(roles.indexOf('ROLE_ADMIN')<0){
+      return false
+    }
+    return true
+  }
+  
+
 
   public logOut(){
-    window.sessionStorage.clear()
+    window.localStorage.clear()
+    this.router.navigate(['/'])
   }
 }
